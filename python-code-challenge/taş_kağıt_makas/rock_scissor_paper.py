@@ -2,7 +2,8 @@ import random
 oyuncu_score = 0
 computer_score = 0
 print ("welcome rock/paper/scissor game")
-print("The game ends when either one of them reach 3!")
+print("The game ends when either one of them reach 3!\n")
+
 while True:
     
     kullanici_secimi = input("please enter your weapon (rock/paper/scissor) ")
@@ -32,15 +33,14 @@ while True:
     elif (kullanici_secimi == tkm[3]) and (com_secimi == tkm[2]):
          print("scissor beats paper - user wins")
          oyuncu_score += 1
-    else:
-        continue
     
-    print(f"\nUser wins {oyuncu_score}s | Computer wins {computer_score}s")
+    print(f"\nUser wins {oyuncu_score}s | Computer wins {computer_score}s\n")
+    
     
     if oyuncu_score == 3:
-        print("User has won the game")
+        print("\nUser has won the game")
         break
     elif computer_score == 3:
-        print("Computer has won the game")
+        print("\nComputer has won the game")
         break
         
