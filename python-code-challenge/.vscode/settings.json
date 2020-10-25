@@ -1,0 +1,8 @@
+{
+    "python.terminal.executeInFileDir": true,
+    "python.autoComplete.addBrackets": true,
+    "python.autoComplete.extraPaths": [
+    ],
+    "python.globalModuleInstallation": true,
+    "python.terminal.activateEnvInCurrentTerminal": true
+}

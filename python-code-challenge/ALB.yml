@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  
+Parameters:
+  
+Metadata:
+  
+Mappings:
+  
+Conditions:
+  
+Resources:
+
+
+LogicalID:
+  Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+  Properties:
+    HealthCheckEnabled: Boolean
+    HealthCheckIntervalSeconds: Integer
+    HealthCheckPath: String
+    HealthCheckPort: String
+    HealthCheckProtocol: String
+    HealthCheckTimeoutSeconds: Integer
+    HealthyThresholdCount: Integer
+    Matcher:
+      Matcher
+    Name: String
+    Port: Integer
+    Protocol: String
+    Tags:
+      - Tag
+    TargetGroupAttributes:
+      - TargetGroupAttribute
+    TargetType: String
+    Targets:
+      - TargetDescription
+    UnhealthyThresholdCount: Integer
+    VpcId: String
+
+
+  LogicalID:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: String #required
+      GroupName: String
+      SecurityGroupEgress:
+        - Egress
+      SecurityGroupIngress:
+          CidrIp: String
+  CidrIpv6: String
+  Description: String
+  FromPort: Integer
+  IpProtocol: String
+  SourcePrefixListId: String
+  SourceSecurityGroupId: String
+  SourceSecurityGroupName: String
+  SourceSecurityGroupOwnerId: String
+  ToPort: Integer
+
+
+      Tags:
+        - Tag
+      VpcId: String
+  
+Transform:
+  
+Outputs:
