@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template creates an EC2 instance to run a static website application deployed with Apache Web Server
+
+Parameters:
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+
+Resources:
+
+  IntegerToRomanWebsiteCFInstance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: ami-0cebb45b34604efb8
+      InstanceType: t2.micro
+      KeyName: bu_bizim_yeni
+      SecurityGroups:
+        - Flask_Working
+      Tags:
+        - Key: Name
+          Value: ApacheWebEC2
+      UserData: 
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd
+            yum install python3 -y
+            DATE_TIME=`date`
+            pip3 install flask
+            wget https://raw.githubusercontent.com/Anthncara/MEMO/master/aws/projects/001-roman-numerals-converter/appV2.py
+            mkdir templates
+            cd templates
+            wget https://raw.githubusercontent.com/Anthncara/MEMO/master/aws/projects/001-roman-numerals-converter/templates/result.html
+            wget https://raw.githubusercontent.com/Anthncara/MEMO/master/aws/projects/001-roman-numerals-converter/templates/index.html
+            cd ..
+            python3 appV2.py
+            systemctl start httpd
+            systemctl enable httpd

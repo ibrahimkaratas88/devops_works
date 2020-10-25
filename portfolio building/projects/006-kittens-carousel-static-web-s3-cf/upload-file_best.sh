@@ -1,0 +1,1 @@
+aws s3 cp <path-to-file-from-local> s3://<S3_BUCKET_NAME>/<folder-name> --acl public-read

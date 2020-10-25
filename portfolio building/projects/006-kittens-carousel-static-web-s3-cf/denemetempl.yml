@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description:"merhaba bu program yeni"
+
+Parameters:
+  LogicalID:
+    Type: "AWS::Route53::HostedZone"
+    Properties:
+      HostedZoneConfig:
+        HostedZoneConfig
+      HostedZoneTags:
+        - HostedZoneTag
+      Name: String #required
+      QueryLoggingConfig:
+        QueryLoggingConfig
+      VPCs:
+        - VPC
+  
+Metadata:
+  
+Mappings:
+  
+Conditions:
+  
+Resources:
+  
+Transform:
+  
+Outputs:

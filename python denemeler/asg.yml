@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+    
+Parameters:
+LogicalID:
+    Type: "AWS::S3::Bucket"
+    Properties:
+        AccelerateConfiguration:
+            AccelerateConfiguration
+        AccessControl: String
+        AnalyticsConfigurations:
+            - AnalyticsConfiguration
+        BucketEncryption:
+            BucketEncryption
+        BucketName: String
+        CorsConfiguration:
+            CorsConfiguration
+        InventoryConfigurations:
+            - InventoryConfiguration
+        LifecycleConfiguration:
+            LifecycleConfiguration
+        LoggingConfiguration:
+            LoggingConfiguration
+        MetricsConfigurations:
+            - MetricsConfiguration
+        NotificationConfiguration:
+            NotificationConfiguration
+        ObjectLockConfiguration:
+            ObjectLockConfiguration
+        ObjectLockEnabled: Boolean
+        PublicAccessBlockConfiguration:
+            PublicAccessBlockConfiguration
+        ReplicationConfiguration:
+            ReplicationConfiguration
+        Tags:
+            - Tag
+        VersioningConfiguration:
+            VersioningConfiguration
+        WebsiteConfiguration:
+            WebsiteConfiguration
+
+- Label:
+    default: ParameterGroupDescription
+  Parameters:
+  - Parameter:
+    
+Mappings:
+    LogicalID:
+        Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+        Properties:
+            HealthCheckEnabled: Boolean
+            HealthCheckIntervalSeconds: Integer
+            HealthCheckPath: String
+            HealthCheckPort: String
+            HealthCheckProtocol: String
+            HealthCheckTimeoutSeconds: Integer
+            HealthyThresholdCount: Integer
+            Matcher:
+                Matcher
+            Name: String
+            Port: Integer
+            Protocol: String
+            Tags:
+                - Tag
+            TargetGroupAttributes:
+                - TargetGroupAttribute
+            TargetType: String
+            Targets:
+                - TargetDescription
+            UnhealthyThresholdCount: Integer
+            VpcId: String
+    
+Conditions:
+    
+Resources:
+  
+Transform:
+    
+Outputs:

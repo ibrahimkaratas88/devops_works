@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template creates an EC2 instance to run a static website application deployed with Apache Web Server
+   
+Resources:     
+  KittensCarouselStaticWebsiteCFInstance:  #instance'a ismi biz veriyoruz
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: ami-0c94855ba95c71c99    #EC2 "create instance" bölümünden alıyoruz
+      InstanceType: t2.micro
+      KeyName: ibrahimk   #pem dosya ismimiz
+      SecurityGroups:
+        - flask_working      #security groupsdan aldık (HTTP ve SSH açık olacak şekilde olmalı)
+      Tags:
+        - Key: Name
+          Value: resim  #instance'a ismi biz veriyoruz
+      UserData: 
+        Fn::Base64:
+          !Sub |
+            #! /bin/bash
+            yum update -y
+            yum install -y httpd
+            DATE_TIME=`date`
+            cd /var/www/html
+            wget https://raw.githubusercontent.com/ibrahimkaratas88/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/foto/index.html
+            wget https://raw.githubusercontent.com/ibrahimkaratas88/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/foto/resim1.jpg
+            wget https://raw.githubusercontent.com/ibrahimkaratas88/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/foto/resim2.jpg
+            wget https://raw.githubusercontent.com/ibrahimkaratas88/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/foto/resim3.jpg
+            wget https://raw.githubusercontent.com/ibrahimkaratas88/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/foto/resim4.jpg
+            wget https://raw.githubusercontent.com/ibrahimkaratas88/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/foto/resim5.jpg
+            wget https://raw.githubusercontent.com/ibrahimkaratas88/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/foto/resim6.jpg
+            wget https://raw.githubusercontent.com/ibrahimkaratas88/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/foto/resim7.jpg
+            wget https://raw.githubusercontent.com/ibrahimkaratas88/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/foto/resim8.jpg
+            
+            systemctl start httpd
+            systemctl enable httpd
+Outputs:
+  InstanceId:
+    Description: InstanceId of the first EC2 instance
+    Value: !Ref KittensCarouselStaticWebsiteCFInstance
+  PublicDNS:
+    Description: Public DNS Name of the EC2 instance
+    Value: !GetAtt 
+      - KittensCarouselStaticWebsiteCFInstance
+      - PublicDnsName
+  PublicIP:
+    Description: Public IP address of the EC2 instance
+    Value: !GetAtt 
+      - KittensCarouselStaticWebsiteCFInstance
+      - PublicIp

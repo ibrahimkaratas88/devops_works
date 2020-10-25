@@ -1,0 +1,167 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  The Phonebook Application aims to create a phonebook application 
+  in Python and deployed as a web application with Flask on AWS 
+  Application Load Balancer with Auto Scaling Group of Elastic 
+  Compute Cloud (EC2) Instances and Relational Database Service(RDS)
+  using AWS Cloudformation Service. For deploying EC2, keypair is defined as a parameter.
+  
+Parameters:
+  Subnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: The list of SubnetIds in your Virtual Private Cloud (VPC)
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+  
+Resources:
+
+  PBPLoadBalancerSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Enables HTTP
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          
+  PBPInstanceSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Enables SSH and HTTP
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !GetAtt PBPLoadBalancerSecurityGroup.GroupId
+
+  PBPRDSSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Enables HTTP
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0        
+
+  PBPRDSDBInstance:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      AllocatedStorage: 20
+      DBInstanceClass: db.t2.micro
+      DBInstanceIdentifier: PhoneBookRDSInstance
+      DBName: phonebook    
+      Engine: mysql
+      EngineVersion: 8.0.20   
+      MasterUserPassword: clarusway-1
+      MasterUsername: admin
+      PubliclyAccessible: true
+      StorageType: gp2
+      VPCSecurityGroups: 
+        - !GetAtt PBPRDSSecurityGroup.GroupId
+          
+  PBPALBTargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 25
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 3
+      VpcId: !GetAtt PBPLoadBalancerSecurityGroup.VpcId
+
+  PBPALBListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions: 
+        - Type: forward
+          TargetGroupArn: !Ref PBPALBTargetGroup
+      LoadBalancerArn: !Ref PBPApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+    
+  PBPApplicationLoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      SecurityGroups:
+        - !GetAtt PBPLoadBalancerSecurityGroup.GroupId
+      Subnets: !Ref Subnets 
+
+  PBPCPUPolicy:
+    Type: "AWS::AutoScaling::ScalingPolicy"
+    Properties:
+      AutoScalingGroupName: !Ref PBPAutoScalingGroup
+      PolicyType: TargetTrackingScaling
+      TargetTrackingConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ASGAverageCPUUtilization
+        TargetValue: 60
+        
+  PBPLaunchConfig:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: ami-0c94855ba95c71c99
+      InstanceType: t2.micro
+      SecurityGroups:
+        - !Ref PBPInstanceSecurityGroup
+      UserData: 
+        Fn::Base64:
+          Fn::Sub:
+            - |
+              #!/bin/bash
+              yum update -y
+              yum install python3 -y
+              pip3 install flask
+              pip3 install flask-mysql
+              cd /home/ec2-user
+              cat > dbserver.endpoint <<EOF
+              ${EndpointAddress}
+              EOF
+
+              wget https://raw.githubusercontent.com/Anthncara/MEMO/master/aws/projects/004-phonebook-web-application/phonebook-app.py
+              mkdir templates
+              cd templates
+              wget https://raw.githubusercontent.com/Anthncara/MEMO/master/aws/projects/004-phonebook-web-application/templates/index.html
+              wget https://raw.githubusercontent.com/Anthncara/MEMO/master/aws/projects/004-phonebook-web-application/templates/delete.html
+              wget https://raw.githubusercontent.com/Anthncara/MEMO/master/aws/projects/004-phonebook-web-application/templates/add-update.html
+              cd ..
+              python3 phonebook-app.py
+            - EndpointAddress: !GetAtt PBPRDSDBInstance.Endpoint.Address
+
+  PBPAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AvailabilityZones: !GetAZs
+      DesiredCapacity: 2 
+      LaunchConfigurationName: !Ref PBPLaunchConfig
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: 90
+      MinSize: '1'
+      MaxSize: '3'
+      TargetGroupARNs:
+        - !Ref PBPALBTargetGroup
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: !Sub Web Server of ${AWS::StackName} Stack 
+
+Outputs:
+  URL:
+    Description: The URL of the website
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt PBPApplicationLoadBalancer.DNSName
+  URL2:
+    Description: The URL of the website      
+    Value: !Sub 
+      - http://${PublicAddress}
+      - PublicAddress: !GetAtt PBPApplicationLoadBalancer.DNSName

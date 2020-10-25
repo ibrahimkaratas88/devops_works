@@ -1,0 +1,6 @@
+curl localhost:5000
+curl -v localhost:5000 (Verbose)
+curl -v localhost:5000/greet
+curl -v localhost:5000/greet?user=Nec
+curl -v localhost:5000/login
+curl -v -d "username=tyler" localhost:5000/login
