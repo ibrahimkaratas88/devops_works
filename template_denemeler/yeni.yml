@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  
+
+  
+  
+  
+  
+Resources:
+kittens_bucket:
+  Type: "AWS::S3::Bucket"
+  Properties:
+    PublicAccessBlockConfiguration:
+      BlockPublicPolicy: True
+    WebsiteConfiguration:
+      WebsiteConfiguration
+
+Transform:
+  
+Outputs:

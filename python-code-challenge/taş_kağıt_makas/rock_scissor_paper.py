@@ -34,7 +34,7 @@ while True:
          print("scissor beats paper - user wins")
          oyuncu_score += 1
     
-    print(f"\nUser wins {oyuncu_score}s | Computer wins {computer_score}s\n")
+    print(f"\nUser wins {oyuncu_score} time(s) | Computer wins {computer_score} time(s)\n")
     
     
     if oyuncu_score == 3:
