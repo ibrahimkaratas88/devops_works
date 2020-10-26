@@ -7,7 +7,7 @@ print("The game ends when either one of them reach 3!\n")
 while True:
     
     kullanici_secimi = input("please enter your weapon (rock/paper/scissor) ")
-    kullanici_secimi.lower()
+    kullanici_secimi.lower().strip()
     tkm = {1: "rock", 2: "paper", 3 : "scissor"}
     sec = ["rock", "paper", "scissor"]
     com_secimi = random.choice(sec)
